@@ -7,6 +7,7 @@ export interface IRecipe  {
     ingredients:IIngredientStack[];
     totalCalories:number;
     totalPrice:number;
+    cookTime:string;
 }
 
 

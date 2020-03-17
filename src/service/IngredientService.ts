@@ -27,7 +27,7 @@ export class IngredientService {
             Soysauce(),
             Tomato(),
         ];
-        return Promise.resolve(ingredients.filter(ingredient => _.includes(ingredient.name, searchTerm)));
+        return Promise.resolve(ingredients.filter(ingredient => _.includes(ingredient.name.toLowerCase(), searchTerm.toLowerCase())));
     }
 }
 

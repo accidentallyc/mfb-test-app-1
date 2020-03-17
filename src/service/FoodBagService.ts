@@ -13,6 +13,6 @@ export function FoodBag(id:string, name:string):IFoodBag {
         totalCalories: 0,
         totalPrice: 0,
         totalAmount: 0,
-        recipes: [],
+        recipeStacks: [],
     };
 }

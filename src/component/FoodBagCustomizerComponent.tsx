@@ -7,9 +7,15 @@ import {ACTIONS, UPDATE_BAG_INGREDIENT_MODIFYCOUNT, UPDATE_BAG_NAME, UPDATE_BAG_
 
 import DropdownSearch from "./input/DropdownSearch";
 import {IIngredient, IIngredientStack} from "../interface/IIngredient";
+import RecipeTable from "./input/RecipeTable";
+
+enum ViewType {
+    ingredients,
+    recipes
+}
 
 class FoodBagCustomizerComponent extends Component<any, any>{
-    public static MapStateToProps(state:AppState){
+    public static MapStoreToProp(state:AppState){
         return {
             bag: state.pageState.bag
         };
@@ -20,6 +26,10 @@ class FoodBagCustomizerComponent extends Component<any, any>{
         this.onChange = this.onChange.bind(this);
         this.onTdTrashIconClick = this.onTdTrashIconClick.bind(this);
         this.onTdChangeAmount = this.onTdChangeAmount.bind(this);
+        this.onChangeViewType = this.onChangeViewType.bind(this);
+        this.state = {
+            viewType: ViewType.ingredients
+        }
     }
 
     onChange(event:ChangeEvent<HTMLInputElement>)  {
@@ -39,7 +49,15 @@ class FoodBagCustomizerComponent extends Component<any, any>{
         this.props.dispatch(UPDATE_BAG_INGREDIENT_MODIFYCOUNT(this.props.bag.id, ingredientId, value));
     }
 
-    renderTable(): React.ReactElement {
+    onChangeViewType(event: React.MouseEvent<HTMLElement>) {
+        this.setState({
+            viewType: +(event.currentTarget.dataset.viewType || 0)
+        });
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    renderIngredientTable(): React.ReactElement {
         let totalPrice = 0;
         let totalCals = 0;
         const trs = this.props.bag.ingredientStacks.map((stack:IIngredientStack) => {
@@ -82,15 +100,41 @@ class FoodBagCustomizerComponent extends Component<any, any>{
                 <td></td>
                 <td></td>
                 <td>${totalPrice.toFixed(2)}</td>
-                <td>${totalCals.toFixed(2)}</td>
+                <td>{totalCals}</td>
                 <td></td>
             </tr>
             </tfoot>
         </table>
     }
 
+    renderViewTypeGroup() {
+        const views = [
+            "pure-button fas fa-shopping-bag",
+            "pure-button fas fa-utensils"
+        ];
+        views[ this.state.viewType ] += " pure-button-primary pure-button-active"
+
+        return <div className={"pure-button-group"} role={"group"}>
+            {
+                views.map((className, i) =>
+                    <button key={i} className={className} data-view-type={i} onClick={this.onChangeViewType}></button>)
+            }
+        </div>
+    }
+
+    renderBody() {
+        switch (this.state.viewType as ViewType) {
+            case ViewType.ingredients:
+                return this.renderIngredientTable();
+            case ViewType.recipes:
+                return <RecipeTable></RecipeTable>
+        }
+
+    }
+
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
         const state = this.state as FoodBagCustomizerState;
+        const selectedButtonClass = "pure-button-active pure-button-primary";
 
         return <div className="foodbag-customizer">
             <br/>
@@ -100,9 +144,6 @@ class FoodBagCustomizerComponent extends Component<any, any>{
 
 
                     <form className="pure-form pure-form-aligned">
-
-
-
 
                         <div className="pure-control-group foodbag-header-input">
                             <img src="/logo192.png" className="foodbag-img"/>
@@ -118,7 +159,12 @@ class FoodBagCustomizerComponent extends Component<any, any>{
                         <div className="pure-control-group foodbag-search-input">
                             <DropdownSearch type="text"/>
                         </div>
-                        { this.renderTable() }
+
+                        <div className={"pure-control-group"}>
+                            {this.renderViewTypeGroup()}
+                        </div>
+
+                        { this.renderBody() }
 
                     </form>
                 </div>
@@ -128,4 +174,4 @@ class FoodBagCustomizerComponent extends Component<any, any>{
     }
 }
 
-export default connect(FoodBagCustomizerComponent.MapStateToProps)(FoodBagCustomizerComponent);
+export default connect(FoodBagCustomizerComponent.MapStoreToProp)(FoodBagCustomizerComponent);
