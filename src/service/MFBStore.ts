@@ -79,6 +79,3 @@ const MFBStore = createStore((state: object = initialState, action: any) => {
 });
 
 export default MFBStore;
-
-
-(window as any).store = MFBStore;

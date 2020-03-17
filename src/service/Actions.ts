@@ -1,4 +1,5 @@
 import {IngredientService} from "./IngredientService";
+import {IIngredient, IIngredientStack} from "../interface/IIngredient";
 
 export enum ACTIONS {
     UPDATE_NAME = "UPDATE_NAME",
@@ -19,11 +20,12 @@ export function UPDATE_BAG_NAME(bagId:string, name:string) {
     }
 }
 
-export function UPDATE_BAG_ADDINGREDIENT(bagId:string, ingredient:IngredientService, amount?:number) {
+export function UPDATE_BAG_ADDINGREDIENT(bagId:string, ingredient:IIngredient, amount?:number) {
     return {
         type: ACTIONS.UPDATE_BAG_ADDINGREDIENT,
         ns: NAMESPACE.CUSTOMIZE_BAG,
         ingredient,
+        ingredientId: ingredient.id, // temp resolution
         amount,
         bagId,
     }
