@@ -4,6 +4,7 @@
 
 .DropdownSearch .DropdownSearch-results {
     position: absolute;
+    z-index:11;
     width: calc(100% - 26px);
     background: #FFF;
     padding: 12px;

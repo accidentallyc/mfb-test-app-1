@@ -32,5 +32,16 @@ export function RecipeStack(recipe:IRecipe, totalAmount:number):IRecipeStack {
         totalAmount,
         totalCalories: recipe.totalCalories * totalAmount,
         totalPrice: recipe.totalPrice * totalAmount,
+        _createdAt : (new Date).getTime(),
+        isEqual(otherObj) {
+            return 'recipe' in otherObj
+                && 'totalAmount' in otherObj
+                && 'totalCalories' in otherObj
+                && 'totalPrice' in otherObj
+                && this.totalAmount == otherObj.totalAmount
+                && this.totalCalories == otherObj.totalCalories
+                && this.totalPrice == otherObj.totalPrice
+                && this.recipe.id == otherObj.recipe.id;
+        }
     }
 }

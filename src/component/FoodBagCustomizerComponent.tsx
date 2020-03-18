@@ -2,22 +2,21 @@ import React, {ChangeEvent, Component, ReactElement} from "react";
 import "./FoodBagCustomizerComponent.css";
 import {connect} from 'react-redux';
 import AppState from "../interface/states/AppState";
-import FoodBagCustomizerState from "../interface/states/FoodBagCustomizerState";
+import FoodBagCustomizerState, {ViewType} from "../interface/states/FoodBagCustomizerState";
 import {ACTIONS, UPDATE_BAG_INGREDIENT_MODIFYCOUNT, UPDATE_BAG_NAME, UPDATE_BAG_RMINGREDIENT} from "../service/Actions";
 
 import DropdownSearch from "./input/DropdownSearch";
 import {IIngredient, IIngredientStack} from "../interface/IIngredient";
 import RecipeTable from "./input/RecipeTable";
+import ViewTypeSwitch from "./input/ViewTypeSwitch";
 
-enum ViewType {
-    ingredients,
-    recipes
-}
+
 
 class FoodBagCustomizerComponent extends Component<any, any>{
     public static MapStoreToProp(state:AppState){
         return {
-            bag: state.pageState.bag
+            bag: state.pageState.bag,
+            viewType: state.pageState.viewType,
         };
     }
 
@@ -26,10 +25,6 @@ class FoodBagCustomizerComponent extends Component<any, any>{
         this.onChange = this.onChange.bind(this);
         this.onTdTrashIconClick = this.onTdTrashIconClick.bind(this);
         this.onTdChangeAmount = this.onTdChangeAmount.bind(this);
-        this.onChangeViewType = this.onChangeViewType.bind(this);
-        this.state = {
-            viewType: ViewType.ingredients
-        }
     }
 
     onChange(event:ChangeEvent<HTMLInputElement>)  {
@@ -47,14 +42,6 @@ class FoodBagCustomizerComponent extends Component<any, any>{
         const ingredientId = event.currentTarget.dataset.ingredientId as string;
         const value = +event.currentTarget.value;
         this.props.dispatch(UPDATE_BAG_INGREDIENT_MODIFYCOUNT(this.props.bag.id, ingredientId, value));
-    }
-
-    onChangeViewType(event: React.MouseEvent<HTMLElement>) {
-        this.setState({
-            viewType: +(event.currentTarget.dataset.viewType || 0)
-        });
-        event.preventDefault();
-        event.stopPropagation();
     }
 
     renderIngredientTable(): React.ReactElement {
@@ -107,29 +94,14 @@ class FoodBagCustomizerComponent extends Component<any, any>{
         </table>
     }
 
-    renderViewTypeGroup() {
-        const views = [
-            "pure-button fas fa-shopping-bag",
-            "pure-button fas fa-utensils"
-        ];
-        views[ this.state.viewType ] += " pure-button-primary pure-button-active"
-
-        return <div className={"pure-button-group"} role={"group"}>
-            {
-                views.map((className, i) =>
-                    <button key={i} className={className} data-view-type={i} onClick={this.onChangeViewType}></button>)
-            }
-        </div>
-    }
 
     renderBody() {
-        switch (this.state.viewType as ViewType) {
+        switch (this.props.viewType as ViewType) {
             case ViewType.ingredients:
                 return this.renderIngredientTable();
             case ViewType.recipes:
                 return <RecipeTable></RecipeTable>
         }
-
     }
 
     render(): React.ReactElement<any, string | React.JSXElementConstructor<any>> | string | number | {} | React.ReactNodeArray | React.ReactPortal | boolean | null | undefined {
@@ -160,10 +132,7 @@ class FoodBagCustomizerComponent extends Component<any, any>{
                             <DropdownSearch type="text"/>
                         </div>
 
-                        <div className={"pure-control-group"}>
-                            {this.renderViewTypeGroup()}
-                        </div>
-
+                        <ViewTypeSwitch/>
                         { this.renderBody() }
 
                     </form>

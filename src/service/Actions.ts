@@ -1,11 +1,13 @@
 import {IngredientService} from "./IngredientService";
 import {IIngredient, IIngredientStack} from "../interface/IIngredient";
+import {ViewType} from "../interface/states/FoodBagCustomizerState";
 
 export enum ACTIONS {
     UPDATE_NAME = "UPDATE_NAME",
     UPDATE_BAG_ADDINGREDIENT = "UPDATE_BAG_ADDINGREDIENT",
     UPDATE_BAG_RMINGREDIENT = "UPDATE_BAG_RMINGREDIENT",
     UPDATE_BAG_INGREDIENT_MODIFYCOUNT = "UPDATE_BAG_INGREDIENT_MODIFYCOUNT",
+    UPDATE_PAGE_CUSTOMBAG_VIEWTYPE = "UPDATE_PAGE_CUSTOMBAG_VIEWTYPE",
 }
 
 export enum NAMESPACE {
@@ -50,10 +52,10 @@ export function UPDATE_BAG_INGREDIENT_MODIFYCOUNT(bagId:string, ingredientId:str
     }
 }
 
-
-export interface IAction {
-    type: ACTIONS,
-    ns: NAMESPACE,
-    value:unknown,
-    bagId?:string,
+export function UPDATE_PAGE_CUSTOMBAG_VIEWTYPE(viewType:ViewType|number) {
+    return {
+        type: ACTIONS.UPDATE_PAGE_CUSTOMBAG_VIEWTYPE,
+        ns: NAMESPACE.CUSTOMIZE_BAG,
+        viewType: viewType as ViewType
+    };
 }

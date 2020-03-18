@@ -12,7 +12,6 @@ class RecipeTable extends React.Component<any, any> {
     }
 
     render(){
-        console.log(this.props.bag.recipeStacks)
         return <>
                 <table className="pure-table recipe-table">
                     <thead>
