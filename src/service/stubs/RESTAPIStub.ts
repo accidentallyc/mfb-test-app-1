@@ -2,6 +2,7 @@ import {IIngredientStack} from "../../interface/IIngredient";
 import * as RecipeStubs from "./RecipeStubs";
 import {IMap} from "../../interface/AdvancedTypes";
 import {IRecipe} from "../../interface/IRecipe";
+import _ from "lodash";
 
 type FunctionStub = (payload:any) => any;
 
@@ -10,9 +11,23 @@ const PostStubs:IMap<Function> = {};
 const GetStubs:IMap<Function> = {};
 const ApiStubs: IMap<IMap<Function>> = { PostStubs, GetStubs };
 
-PostStubs["/recipe"] = getRecipesFromIngredients;
-
+PostStubs["recipe"] = getRecipesFromIngredients;
+GetStubs["recipe"] = getRecipesFromName;
 export default ApiStubs;
+
+export function getRecipesFromName(payload:any) {
+    const recipeStubs = RecipeStubs as IMap<Function>;
+    const term:string = payload.term.toLowerCase();
+
+    const recipes:IRecipe[] = [];
+    for(let recipeName in recipeStubs) {
+        if(_.includes(recipeName.toLowerCase(), term)) {
+            const Recipe = recipeStubs[recipeName];
+            recipes.push(Recipe())
+        }
+    }
+    return recipes;
+}
 
 export function getRecipesFromIngredients(payload:any) {
     const ingredientStacks = payload.ingredientStacks as IIngredientStack[];
@@ -26,7 +41,7 @@ export function getRecipesFromIngredients(payload:any) {
     for(let recipeName in recipeStubs) {
         const Recipe = recipeStubs[recipeName];
         const recipe:IRecipe = Recipe();
-        const hasAllIngredients = recipe.ingredients.every( stackInRecipe =>{
+        const hasAllIngredients = recipe.ingredientStacks.every(stackInRecipe =>{
             const stackInBag = ingredientMap[ stackInRecipe.ingredient.id ];
             if(stackInBag) {
                 return  stackInBag.totalAmount >= stackInRecipe.totalAmount;

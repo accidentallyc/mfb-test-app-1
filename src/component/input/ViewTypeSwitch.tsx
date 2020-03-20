@@ -8,6 +8,8 @@ import {ViewType} from "../../interface/states/FoodBagCustomizerState";
 import {IIngredientStack} from "../../interface/IIngredient";
 import {IRecipeStack} from "../../interface/IRecipe";
 import {IStack} from "../../interface/IStack";
+import {RecipeStack} from "../../service/RecipeService";
+import {IngredientStack} from "../../service/IngredientService";
 
 class ViewTypeSwitch extends React.Component<any, any> {
     static MapStoreToProp(state:AppState) {
@@ -30,6 +32,7 @@ class ViewTypeSwitch extends React.Component<any, any> {
         let prevStack:IStack[];
         let currStack:IStack[];
         let counterPropName = null
+        let equalFunction:(a:any,b:any)=>boolean;
         switch (this.props.viewType as ViewType) {
             default:
             case ViewType.ingredients:
@@ -37,18 +40,18 @@ class ViewTypeSwitch extends React.Component<any, any> {
                 currStack = this.props.bag.recipeStacks;
                 prevStack = prevProps.bag.recipeStacks;
                 counterPropName = 'unopenedRecipeCount';
+                equalFunction = RecipeStack.isEqual;
                 break;
             case ViewType.recipes:
                 // update ingredients counter
                 currStack = this.props.bag.ingredientStacks;
                 prevStack = prevProps.bag.ingredientStacks;
                 counterPropName = 'unopenedIngredientCount';
+                equalFunction = IngredientStack.isEqual;
                 break;
         }
 
-        const diffs = _.differenceWith(currStack, prevStack, (stack1:IStack, stack2:IStack) => {
-            return stack1.isEqual(stack2);
-        });
+        const diffs = _.differenceWith(currStack, prevStack, equalFunction);
 
 
         if(diffs.length) {

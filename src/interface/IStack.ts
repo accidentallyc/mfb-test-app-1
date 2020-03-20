@@ -3,5 +3,4 @@ export interface IStack {
     totalCalories:number;
     totalPrice:number;
     _createdAt:number;
-    isEqual:(stack:any)=> boolean;
 }

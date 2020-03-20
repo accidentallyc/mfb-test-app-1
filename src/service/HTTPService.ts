@@ -7,12 +7,19 @@ export class HTTPService {
         return getRandomDelay()
             .then(() => {
                 const temp = new URL(url);
-                return ApiStubs.POST[temp.pathname](payload)
-            }).catch((err:Error) => {
+                return ApiStubs.PostStubs[temp.pathname](payload)
+            })
+            .then((result) => {
+                return {
+                    body:result,
+                    status:200
+                } as IResponseStub
+            })
+            .catch((err:Error) => {
                 return {
                     status:500,
                     body: err.stack,
-                }
+                } as IResponseStub
             })
     }
 
@@ -20,13 +27,19 @@ export class HTTPService {
         return getRandomDelay()
             .then(() => {
                 const temp = new URL(url);
-                return ApiStubs.POST[temp.pathname](temp.search)
-            }).catch((err:Error) => {
+                return ApiStubs.GetStubs[temp.pathname](temp.search)
+            }).then((result) => {
+                return {
+                    body:result,
+                    status:200
+                } as IResponseStub
+            })
+            .catch((err:Error) => {
                 return {
                     status:500,
                     body: err.stack,
-                }
-            })
+                } as IResponseStub
+            });
     }
 }
 
@@ -38,14 +51,18 @@ export interface IResponseStub {
 class URL {
     public search:IMap<string>|null;
     public pathname:string;
+    public host:string;
     constructor(url:string) {
-        const [pathname,search] = url.split("?");
-        this.pathname = pathname;
+        const [fullpath,search] = url.split("?");
+        const [host, ...rest] = fullpath.split("/");
+        this.pathname = rest.join("/");
+        this.host = host;
         if(search) {
             const queryParamPairs = search.split("&");
             this.search = queryParamPairs.reduce((map:any,pair) => {
                 const [key,value] = pair.split("=");
                 map[key] = value;
+                return map;
             }, {})
         } else {
             this.search = null;

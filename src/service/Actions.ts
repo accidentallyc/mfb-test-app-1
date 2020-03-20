@@ -1,11 +1,14 @@
 import {IngredientService} from "./IngredientService";
 import {IIngredient, IIngredientStack} from "../interface/IIngredient";
 import {ViewType} from "../interface/states/FoodBagCustomizerState";
+import {IRecipe} from "../interface/IRecipe";
 
 export enum ACTIONS {
     UPDATE_NAME = "UPDATE_NAME",
     UPDATE_BAG_ADDINGREDIENT = "UPDATE_BAG_ADDINGREDIENT",
     UPDATE_BAG_RMINGREDIENT = "UPDATE_BAG_RMINGREDIENT",
+    UPDATE_BAG_ADDRECIPE = "UPDATE_BAG_ADDRECIPE",
+    UPDATE_BAG_RMRECIPE = "UPDATE_BAG_RMRECIPE",
     UPDATE_BAG_INGREDIENT_MODIFYCOUNT = "UPDATE_BAG_INGREDIENT_MODIFYCOUNT",
     UPDATE_PAGE_CUSTOMBAG_VIEWTYPE = "UPDATE_PAGE_CUSTOMBAG_VIEWTYPE",
 }
@@ -27,11 +30,29 @@ export function UPDATE_BAG_ADDINGREDIENT(bagId:string, ingredient:IIngredient, a
         type: ACTIONS.UPDATE_BAG_ADDINGREDIENT,
         ns: NAMESPACE.CUSTOMIZE_BAG,
         ingredient,
-        ingredientId: ingredient.id, // temp resolution
         amount,
         bagId,
     }
 }
+
+export function UPDATE_BAG_ADDRECIPE(bagId:string, recipe:IRecipe) {
+    return {
+        type: ACTIONS.UPDATE_BAG_ADDRECIPE,
+        ns: NAMESPACE.CUSTOMIZE_BAG,
+        recipe,
+        bagId,
+    }
+}
+
+export function UPDATE_BAG_RMRECIPE(bagId:string, recipe:IRecipe) {
+    return {
+        type: ACTIONS.UPDATE_BAG_ADDRECIPE,
+        ns: NAMESPACE.CUSTOMIZE_BAG,
+        recipe,
+        bagId,
+    }
+}
+
 
 export function UPDATE_BAG_RMINGREDIENT(bagId:string, ingredientId:string) {
     return {

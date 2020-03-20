@@ -1,10 +1,13 @@
-import React, {ChangeEvent, MouseEvent} from "react";
+import React, {ChangeEvent, MouseEvent, SyntheticEvent} from "react";
 import "./DropdownSearch.css";
 import Async from "react-async";
 import {IngredientService} from "../../service/IngredientService";
 import {IIngredient} from "../../interface/IIngredient";
-import {UPDATE_BAG_ADDINGREDIENT, UPDATE_BAG_NAME} from "../../service/Actions";
+import {UPDATE_BAG_ADDINGREDIENT, UPDATE_BAG_ADDRECIPE, UPDATE_BAG_NAME} from "../../service/Actions";
 import {connect} from "react-redux";
+import RecipeService, {Recipe, RecipeStack} from "../../service/RecipeService";
+import {IRecipe} from "../../interface/IRecipe";
+import _ from "lodash";
 
 class DropdownSearch extends React.Component<any, any> {
     constructor(props:any) {
@@ -17,16 +20,19 @@ class DropdownSearch extends React.Component<any, any> {
 
         this.onChange = this.onChange.bind(this);
         this.onBlur = this.onBlur.bind(this);
-        this.onClickItem = this.onClickItem.bind(this);
+        this.onAddIngredient = this.onAddIngredient.bind(this);
+        this.onAddRecipe = this.onAddRecipe.bind(this);
     }
 
     async fetchAllItemsBySearchTerm(searchTerm:string) {
         return Promise.all([
-            IngredientService.getIngredientsByName(searchTerm)
+            IngredientService.getIngredientsByName(searchTerm),
+            RecipeService.getRecipesByName(searchTerm),
         ])
-            .then(([ingredients]) => {
+            .then(([ingredients, recipes]) => {
                 return {
-                    ingredients
+                    ingredients,
+                    recipes,
                 }
             });
     }
@@ -50,8 +56,16 @@ class DropdownSearch extends React.Component<any, any> {
 
     }
 
-    onClickItem(ingredient:any) {
+    onAddIngredient(event:SyntheticEvent<HTMLElement>) {
+        const ingredientsJSON = event.currentTarget.dataset.ingredient as string;
+        const ingredient:IIngredient = JSON.parse(ingredientsJSON);
         this.props.dispatch(UPDATE_BAG_ADDINGREDIENT(this.props.bag.id, ingredient));
+    }
+
+    onAddRecipe(event:SyntheticEvent<HTMLElement>){
+        const recipeJSON = event.currentTarget.dataset.recipe as string;
+        const recipe:IRecipe = JSON.parse(recipeJSON);
+        this.props.dispatch(UPDATE_BAG_ADDRECIPE(this.props.bag.id, recipe));
     }
 
     renderItems() {
@@ -69,11 +83,32 @@ class DropdownSearch extends React.Component<any, any> {
                                 <ul className={"DropdownSearch-results"}>
                                     {
                                         (data as any).ingredients.map((ingredient:IIngredient) => {
-                                            return <li key={ingredient.id} className={"pure-g"} onClick={() => this.onClickItem(ingredient)}>
+                                            const ingredientJSON = JSON.stringify(ingredient);
+                                            return <li key={ingredient.id} className={"pure-g"} onClick={this.onAddIngredient} data-ingredient={ingredientJSON}>
 
                                                 <div className={"pure-u-4-5"}>
                                                     <img src={ingredient.photoUrl.toString()} className={"DropdownSearch-icon"}/>
                                                     <span className={"DropdownSearch-label"}>{ingredient.name}</span>
+                                                </div>
+                                                <div className={"pure-u-1-5"}>
+
+                                                </div>
+                                            </li>;
+                                        }, this)
+                                    }
+
+                                    {
+                                        (data as any).recipes.map((recipe:IRecipe) => {
+                                            const recipeJSON = JSON.stringify(recipe);
+                                            return <li key={recipe.id}
+                                                       className={"pure-g"}
+                                                       onClick={this.onAddRecipe}
+                                                       data-recipe={recipeJSON}
+                                            >
+
+                                                <div className={"pure-u-4-5"}>
+                                                    <img src={recipe.photoUrl.toString()} className={"DropdownSearch-icon"}/>
+                                                    <span className={"DropdownSearch-label"}>{recipe.name}</span>
                                                 </div>
                                                 <div className={"pure-u-1-5"}>
 

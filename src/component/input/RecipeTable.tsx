@@ -38,7 +38,7 @@ class RecipeTable extends React.Component<any, any> {
                     <td>
                         <ul>
                             {
-                                recipe.ingredients.map((ingredientStack) => {
+                                recipe.ingredientStacks.map((ingredientStack) => {
                                     let ingredient = ingredientStack.ingredient;
                                     return <li  key={ingredient.id}>{ingredient.name} x {ingredientStack.totalAmount}</li>
                                 })

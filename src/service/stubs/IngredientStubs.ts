@@ -30,6 +30,7 @@ export function Chicken():IIngredient {
         unit: IngredientUnit.G,
         photoUrl:"/icons/small/chicken.png",
         calories:2105,
+
     };
 }
 

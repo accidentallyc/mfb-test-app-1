@@ -38,15 +38,17 @@ export function IngredientStack(ingredient:IIngredient, amount:number):IIngredie
         totalPrice: amount * ingredient.pricePerUnit,
         totalCalories: amount * (ingredient.calories || 0),
         _createdAt : (new Date).getTime(),
-        isEqual (otherStack:any) {
-            return 'ingredient' in otherStack
-                && 'totalAmount' in otherStack
-                && 'totalCalories' in otherStack
-                && 'totalPrice' in otherStack
-                && this.ingredient.id == otherStack.ingredient.id
-                && this.totalAmount == otherStack.totalAmount
-                && this.totalPrice == otherStack.totalPrice
-                && this.totalCalories == otherStack.totalCalories;
-        }
     } as IIngredientStack;
 };
+
+
+IngredientStack.isEqual = function (thisObj:any,otherStack:any):boolean {
+    return 'ingredient' in otherStack
+        && 'totalAmount' in otherStack
+        && 'totalCalories' in otherStack
+        && 'totalPrice' in otherStack
+        && thisObj.ingredient.id == otherStack.ingredient.id
+        && thisObj.totalAmount == otherStack.totalAmount
+        && thisObj.totalPrice == otherStack.totalPrice
+        && thisObj.totalCalories == otherStack.totalCalories;
+}

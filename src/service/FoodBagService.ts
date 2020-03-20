@@ -1,6 +1,7 @@
 import IFoodBag from "../interface/IFoodBag";
 import {IIngredientStack} from "../interface/IIngredient";
 import _ from "lodash";
+import {IngredientStack} from "./IngredientService";
 
 export default class FoodBagService {
 
@@ -16,19 +17,21 @@ export function FoodBag(id:string, name:string):IFoodBag {
         totalAmount: 0,
         recipeStacks: [],
         _createdAt : (new Date).getTime(),
-        isEqual (otherObj:any) {
-            return 'ingredientStacks' in otherObj
-                && 'totalCalories' in otherObj
-                && 'totalPrice' in otherObj
-                && 'totalAmount' in otherObj
-                && 'recipeStacks' in otherObj
-                && this.totalCalories == otherObj.totalCalories
-                && this.totalPrice == otherObj.totalPrice
-                && this.totalAmount == otherObj.totalAmount
-                && this.ingredientStacks.length == otherObj.ingredientStacks.length
-                && this.recipeStacks.length == otherObj.recipeStacks.length
-                && _.differenceWith(this.ingredientStacks, otherObj.ingredientStacks, (i1,i2) => i1.isEqual(i2)).length == 0
-                && _.differenceWith(this.ingredientStacks, otherObj.ingredientStacks, (i1,i2) => i1.isEqual(i2)).length == 0;
-        }
     };
+}
+
+
+FoodBag.isEqual = function (thisObj:any,otherObj:any) {
+    return 'ingredientStacks' in otherObj
+        && 'totalCalories' in otherObj
+        && 'totalPrice' in otherObj
+        && 'totalAmount' in otherObj
+        && 'recipeStacks' in otherObj
+        && thisObj.totalCalories == otherObj.totalCalories
+        && thisObj.totalPrice == otherObj.totalPrice
+        && thisObj.totalAmount == otherObj.totalAmount
+        && thisObj.ingredientStacks.length == otherObj.ingredientStacks.length
+        && thisObj.recipeStacks.length == otherObj.recipeStacks.length
+        && _.differenceWith(thisObj.ingredientStacks, otherObj.ingredientStacks, IngredientStack.isEqual).length == 0
+        && _.differenceWith(thisObj.ingredientStacks, otherObj.ingredientStacks, IngredientStack.isEqual).length == 0;
 }
