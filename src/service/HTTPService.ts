@@ -1,5 +1,6 @@
 import ApiStubs from "./stubs/RESTAPIStub";
 import {IMap} from "../interface/AdvancedTypes";
+import _ from "lodash";
 
 
 export class HTTPService {
@@ -72,7 +73,7 @@ class URL {
 
 function getRandomDelay() {
     return new Promise((resolve,reject) => {
-        const delayAmount = +((Math.random() * 1000)%3).toFixed(2);
+        const delayAmount = _.random(1000, 5000);
         setTimeout(() => {
             resolve();
         }, delayAmount)

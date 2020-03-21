@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 import RecipeService, {Recipe, RecipeStack} from "../../service/RecipeService";
 import {IRecipe} from "../../interface/IRecipe";
 import _ from "lodash";
+import Skeleton from 'react-loading-skeleton';
 
 class DropdownSearch extends React.Component<any, any> {
     constructor(props:any) {
@@ -47,26 +48,29 @@ class DropdownSearch extends React.Component<any, any> {
     }
 
     onBlur(){
-        setTimeout(() => {
-            this.setState({
-                shouldShow: false,
-                searchTerm:''
+        if(this.state.searchTerm != '' || this.state.shouldShow ) {
+            this.setState(() => {
+                return {
+                    shouldShow: false,
+                    searchTerm:''
+                }
             });
-        },100)
-
+        }
     }
 
     onAddIngredient(event:SyntheticEvent<HTMLElement>) {
         const ingredientsJSON = event.currentTarget.dataset.ingredient as string;
         const ingredient:IIngredient = JSON.parse(ingredientsJSON);
         this.props.dispatch(UPDATE_BAG_ADDINGREDIENT(this.props.bag.id, ingredient));
+        this.onBlur();
     }
-
     onAddRecipe(event:SyntheticEvent<HTMLElement>){
         const recipeJSON = event.currentTarget.dataset.recipe as string;
         const recipe:IRecipe = JSON.parse(recipeJSON);
         this.props.dispatch(UPDATE_BAG_ADDRECIPE(this.props.bag.id, recipe));
+        this.onBlur();
     }
+
 
     renderItems() {
         if(!this.state.shouldShow) {
@@ -75,7 +79,17 @@ class DropdownSearch extends React.Component<any, any> {
             return <>
                 <Async promiseFn={this.state.searchOp}>
                     {({ data, error, isLoading }) => {
-                        if (isLoading) return "Loading...";
+                        if (isLoading) return <ul className={"DropdownSearch-results"}>
+                                    <li>
+                                <div className={"pure-u-4-5"}>
+                                    <Skeleton width={75} height={75}/>
+                                    <span className={"DropdownSearch-label"}>
+                                        <Skeleton />
+                                    </span>
+                                </div>
+                                <div className={"pure-u-1-5"}></div>
+                            </li>
+                        </ul>;
                         if (error) return `Something went wrong: ${error.message}`;
 
                         if(data) {
@@ -84,10 +98,11 @@ class DropdownSearch extends React.Component<any, any> {
                                     {
                                         (data as any).ingredients.map((ingredient:IIngredient) => {
                                             const ingredientJSON = JSON.stringify(ingredient);
+                                            const backgroundImage = `url(${ingredient.photoUrl})`
                                             return <li key={ingredient.id} className={"pure-g"} onClick={this.onAddIngredient} data-ingredient={ingredientJSON}>
 
                                                 <div className={"pure-u-4-5"}>
-                                                    <img src={ingredient.photoUrl.toString()} className={"DropdownSearch-icon"}/>
+                                                    <div style={{backgroundImage}} className={"DropdownSearch-icon"}></div>
                                                     <span className={"DropdownSearch-label"}>{ingredient.name}</span>
                                                 </div>
                                                 <div className={"pure-u-1-5"}>
@@ -100,6 +115,7 @@ class DropdownSearch extends React.Component<any, any> {
                                     {
                                         (data as any).recipes.map((recipe:IRecipe) => {
                                             const recipeJSON = JSON.stringify(recipe);
+                                            const backgroundImage = `url(${recipe.photoUrl})`
                                             return <li key={recipe.id}
                                                        className={"pure-g"}
                                                        onClick={this.onAddRecipe}
@@ -107,7 +123,7 @@ class DropdownSearch extends React.Component<any, any> {
                                             >
 
                                                 <div className={"pure-u-4-5"}>
-                                                    <img src={recipe.photoUrl.toString()} className={"DropdownSearch-icon"}/>
+                                                    <div style={{backgroundImage}} className={"DropdownSearch-icon"}></div>
                                                     <span className={"DropdownSearch-label"}>{recipe.name}</span>
                                                 </div>
                                                 <div className={"pure-u-1-5"}>
@@ -129,11 +145,12 @@ class DropdownSearch extends React.Component<any, any> {
 
     render() {
         const dropdownClasses = ["DropdownSearch-results"];
-
+        const cover = this.state.shouldShow ? <div className={"DropdownSearch-Cover"} onClick={this.onBlur}></div> : <></>;
         return (
             <div className="DropdownSearch" >
-                <input type="text" value={this.state.searchTerm} onChange={this.onChange} onBlur={this.onBlur}/>
+                <input type="text" value={this.state.searchTerm} onChange={this.onChange} />
                 { this.renderItems()}
+                {cover}
             </div>
         );
     }
