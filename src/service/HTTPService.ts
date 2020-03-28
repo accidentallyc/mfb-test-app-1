@@ -24,23 +24,29 @@ export class HTTPService {
             })
     }
 
-    public static GET(url:string) {
-        return getRandomDelay()
-            .then(() => {
-                const temp = new URL(url);
-                return ApiStubs.GetStubs[temp.pathname](temp.search)
-            }).then((result) => {
-                return {
-                    body:result,
-                    status:200
-                } as IResponseStub
-            })
-            .catch((err:Error) => {
-                return {
-                    status:500,
-                    body: err.stack,
-                } as IResponseStub
-            });
+    public static GET(url:string):Promise<Response|IResponseStub> {
+        const temp = new URL(url);
+
+        // if stubbed FN exists then
+        const stubbedFn = ApiStubs.GetStubs[temp.pathname];
+        if(stubbedFn) {
+            return getRandomDelay()
+                .then(() => ApiStubs.GetStubs[temp.pathname](temp.search) )
+                .then((result) => {
+                    return {
+                        body:result,
+                        status:200
+                    } as IResponseStub
+                })
+                .catch((err:Error) => {
+                    return {
+                        status:500,
+                        body: err.stack,
+                    } as IResponseStub
+                });
+        } else {
+            return fetch(temp.fullpath);
+        }
     }
 }
 
@@ -53,9 +59,11 @@ class URL {
     public search:IMap<string>|null;
     public pathname:string;
     public host:string;
+    public fullpath: string;
     constructor(url:string) {
         const [fullpath,search] = url.split("?");
         const [host, ...rest] = fullpath.split("/");
+        this.fullpath = fullpath;
         this.pathname = rest.join("/");
         this.host = host;
         if(search) {

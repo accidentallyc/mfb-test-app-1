@@ -1,5 +1,5 @@
 import AppState from "../interface/states/AppState";
-import {createStore} from "redux";
+import {combineReducers, createStore} from "redux";
 import {ACTIONS, NAMESPACE} from "./Actions";
 import * as _ from "lodash";
 import {IIngredient, IIngredientStack} from "../interface/IIngredient";
@@ -16,6 +16,9 @@ const initialState = {
     pageState: {
         bag: FoodBag("0000", "Fat Arse's Bag"),
         viewType: ViewType.ingredients,
+    },
+    config: {
+        apiServerUrl: "https://localhost:5001"
     }
 } as AppState;
 

@@ -1,0 +1,29 @@
+#bag-view {
+  padding-top:6em;
+
+  h2,h4 {
+    margin:0 0.8rem;
+  }
+
+  h3 {
+    margin:0.9rem 0.8rem;
+  }
+
+  #bag-view-body {
+    margin: 1.5rem 0;
+  }
+
+  #bag-view-ingredients {
+    margin: 0 0 2rem 0;
+  }
+
+  #bag-view-description {
+    p,.react-loading-skeleton {
+      margin: 0.2em 0;
+    }
+
+    .react-loading-skeleton:last-of-type {
+      width: 50%;
+    }
+  }
+}

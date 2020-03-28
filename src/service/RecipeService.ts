@@ -1,16 +1,16 @@
 import {IIngredientStack} from "../interface/IIngredient";
 import {IRecipe, IRecipeStack} from "../interface/IRecipe";
-import * as RecipeStubs from "./stubs/RecipeStubs";
 import {HTTPService, IResponseStub} from "./HTTPService";
 import {URL} from "../interface/AdvancedTypes";
-import _ from "lodash";
+import MFBStore from "./MFBStore";
 
-
-const API_SERVER = "www.some-fake-address.com";
+const API_SERVER = () => {
+    MFBStore.getState()
+}
 export default class RecipeService {
     public static getRecipesFromIngredients(ingredientStacks:IIngredientStack[]):Promise<IRecipe[]> {
         return HTTPService
-            .POST(`${API_SERVER}/recipe`, { ingredientStacks })
+            .POST(`${API_SERVER()}/recipe`, { ingredientStacks })
             .then((response:IResponseStub) => {
                 return response.body as IRecipe[];
             });
@@ -18,8 +18,8 @@ export default class RecipeService {
 
     static getRecipesByName(searchTerm: string) {
         return HTTPService
-            .GET(`${API_SERVER}/recipe?term=${searchTerm}`)
-            .then((response:IResponseStub) => {
+            .GET(`${API_SERVER()}/recipe?term=${searchTerm}`)
+            .then((response:IResponseStub|Response) => {
                 return response.body as IRecipe[];
             });
     }

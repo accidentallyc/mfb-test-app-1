@@ -1,0 +1,72 @@
+.foodbag-customizer table,
+.foodbag-customizer input {
+    width: 100%;
+}
+
+.foodbag-customizer th {
+    text-align: center;
+}
+
+.foodbag-customizer table .pure-button {
+    font-size: small;
+}
+
+
+.foodbag-customizer .foodbag-img {
+    width:75px;
+    height: 75px;
+}
+
+.foodbag-header-input > *{
+    vertical-align: top;
+}
+.foodbag-header-input input.title-input {
+    height: 75px;
+    line-height: 75px;
+    font-size: 26px;
+    box-shadow: none;
+    border: none;
+    border-bottom: 2px solid rgba(0,0,0,0);
+    padding: 0;
+    margin-left: 16px;
+    width: calc(100% - 91px);
+    border-radius: 0;
+}
+
+.clean-input {
+    border-right: none !important;
+    border-left: none !important;
+    border-top: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+
+}
+.button-success,
+.button-error,
+.button-warning,
+.button-secondary {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.button-success {
+    background: rgb(28, 184, 65); /* this is a green */
+}
+
+.button-error {
+    background: rgb(202, 60, 60); /* this is a maroon */
+}
+
+.button-warning {
+    background: rgb(223, 117, 20); /* this is an orange */
+}
+
+.button-secondary {
+    background: rgb(66, 184, 221); /* this is a light blue */
+}
+
+.pure-button label {
+    margin: 0 0.3em;
+    cursor: pointer;
+}

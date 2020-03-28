@@ -7,4 +7,7 @@ export default interface IFoodBag extends IStack{
     name:string;
     ingredientStacks: IIngredientStack[];
     recipeStacks: IRecipeStack[];
+    photoUrl?:string;
+    creator?:any;
+    description?:string;
 }
