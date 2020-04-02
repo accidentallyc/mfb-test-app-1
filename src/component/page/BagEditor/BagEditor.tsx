@@ -2,17 +2,11 @@ import React, {ChangeEvent, Component} from "react";
 import "./BagEditor.css";
 import {connect} from 'react-redux';
 import AppState from "../../../interface/states/AppState";
-import {ViewType} from "../../../interface/states/FoodBagCustomizerState";
-import {
-    UPDATE_BAG_INGREDIENT_MODIFYCOUNT,
-    UPDATE_BAG_NAME,
-    UPDATE_BAG_RMINGREDIENT
-} from "../../../service/Actions";
-
-import {IIngredient, IIngredientStack} from "../../../interface/IIngredient";
-import DropdownSearch from "./input/DropdownSearch";
-import RecipeTable from "./input/RecipeTable";
-import ViewTypeSwitch from "./input/ViewTypeSwitch";
+import {UPDATE_BAG_NAME} from "../../../service/Actions";
+import IngredientTable from "../../IngredientTable";
+import RecipeTable from "../../RecipeTable";
+import {DropdownSearch} from "../../DropdownSearch";
+import {ViewType} from "../../ViewTypeSwitch";
 
 class BagEditor extends Component<any, any> {
     public static MapStoreToProp(state: AppState) {
@@ -25,85 +19,19 @@ class BagEditor extends Component<any, any> {
     constructor(props: any) {
         super(props);
         this.onChange = this.onChange.bind(this);
-        this.onTdTrashIconClick = this.onTdTrashIconClick.bind(this);
-        this.onTdChangeAmount = this.onTdChangeAmount.bind(this);
     }
 
     onChange(event: ChangeEvent<HTMLInputElement>) {
         this.props.dispatch(UPDATE_BAG_NAME(this.props.bag.id, event.target.value));
     }
 
-    onTdTrashIconClick(event: React.MouseEvent<HTMLElement>) {
-        const ingredientId = event.currentTarget.dataset.ingredientId as string;
-        this.props.dispatch(UPDATE_BAG_RMINGREDIENT(this.props.bag.id, ingredientId));
-        event.preventDefault();
-        event.stopPropagation();
-    }
-
-    onTdChangeAmount(event: React.ChangeEvent<HTMLInputElement>) {
-        const ingredientId = event.currentTarget.dataset.ingredientId as string;
-        const value = +event.currentTarget.value;
-        this.props.dispatch(UPDATE_BAG_INGREDIENT_MODIFYCOUNT(this.props.bag.id, ingredientId, value));
-    }
-
-    renderIngredientTable(): React.ReactElement {
-        let totalPrice = 0;
-        let totalCals = 0;
-        const trs = this.props.bag.ingredientStacks.map((stack: IIngredientStack) => {
-            const ingredient: IIngredient = stack.ingredient;
-            totalPrice += stack.totalPrice;
-            totalCals += stack.totalCalories || 0;
-            return <tr key={ingredient.id}>
-                <td>{ingredient.name}</td>
-                <td>
-                    <input className={"clean-input"}
-                           type={'number'}
-                           value={stack.totalAmount} step={1} min={1} max={30}
-                           onChange={this.onTdChangeAmount}
-                           data-ingredient-id={ingredient.id}/>
-                </td>
-                <td><small>${ingredient.pricePerUnit} /{ingredient.unit}</small></td>
-                <td>${stack.totalPrice.toFixed(2)}</td>
-                <td>{stack.totalCalories.toFixed(2)}</td>
-                <td className={"controls"}>
-                    <button
-                        className="pure-button fas fa-trash" onClick={this.onTdTrashIconClick} data-ingredient-id={ingredient.id}/>
-                </td>
-            </tr>
-        });
-
-        return <table className="pure-table">
-            <thead>
-            <tr>
-                <th>Ingredient</th>
-                <th>Amount</th>
-                <th>Unit Price</th>
-                <th>Price</th>
-                <th>Calories</th>
-                <th/>
-            </tr>
-            </thead>
-            <tbody>{trs}</tbody>
-            <tfoot>
-            <tr>
-                <td>Totals</td>
-                <td/>
-                <td/>
-                <td>${totalPrice.toFixed(2)}</td>
-                <td>{totalCals}</td>
-                <td/>
-            </tr>
-            </tfoot>
-        </table>
-    }
-
 
     renderBody() {
         switch (this.props.viewType as ViewType) {
             case ViewType.ingredients:
-                return this.renderIngredientTable();
+                // return <IngredientTable foodbag={this.props.bag}/>
             case ViewType.recipes:
-                return <RecipeTable/>
+                // return <RecipeTable/>
         }
     }
 
@@ -129,11 +57,13 @@ class BagEditor extends Component<any, any> {
                         </div>
 
                         <div className="pure-control-group foodbag-search-input">
-                            <DropdownSearch type="text"/>
+                            {/*<DropdownSearch type="text"/>*/}
                         </div>
 
-                        <ViewTypeSwitch/>
-                        {this.renderBody()}
+
+                        {
+                            this.renderBody()
+                        }
 
                         <div style={{marginTop: "1em", textAlign: "right"}}>
                             <button className={"pure-button"} style={{marginRight: "0.5em"}}>

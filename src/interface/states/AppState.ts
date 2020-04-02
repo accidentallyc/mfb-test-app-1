@@ -9,8 +9,26 @@ export default interface AppState {
     },
     config: {
         apiServerUrl: string;
-    }
+    },
+    foodBagMap : IFoodBagStateMap,
+    ingredientMap: IIngredientStateMap,
 }
+
+export interface IFoodBagStateMap {
+    [key:string] :IFoodBagStateMapItem;
+}
+export interface IFoodBagStateMapItem {
+    isLoading: boolean;
+    lastOperation: Promise<any>;
+    value: IFoodBag;
+}
+
+export interface IIngredientStateMap {
+    [key:string] :IFoodBagStateMapItem;
+}
+
+
+
 
 export interface IFoodBagView {
     foodbag:IFoodBag

@@ -1,15 +1,13 @@
 import React from "react";
-import {connect} from 'react-redux';
-import AppState from "../../../../interface/states/AppState";
-import "./RecipeTable.css";
-import {IRecipe, IRecipeStack} from "../../../../interface/IRecipe";
-class RecipeTable extends React.Component<any, any> {
-    static MapStoreToProp(state:AppState) {
-        return {
-            bag: state.pageState.bag
-        };
-    }
+import "./RecipeTable.scss";
+import {IRecipe, IRecipeStack} from "../interface/IRecipe";
 
+
+interface RecipeTableProps {
+    recipeStacks: IRecipeStack[];
+}
+
+export default class RecipeTable extends React.Component<RecipeTableProps, any> {
     render(){
         return <>
                 <table className="pure-table recipe-table">
@@ -29,8 +27,8 @@ class RecipeTable extends React.Component<any, any> {
     }
 
     renderTrs() {
-        const trs = this.props.bag.recipeStacks.map((stack:IRecipeStack) => {
-            const recipe:IRecipe = stack.recipe;
+        return this.props.recipeStacks.map((stack:IRecipeStack) => {
+            const recipe:IRecipe = stack.item;
                 return <tr key={recipe.id}>
                     <td>{recipe.name}</td>
                     <td>{recipe.cookTime}</td>
@@ -38,7 +36,7 @@ class RecipeTable extends React.Component<any, any> {
                         <ul>
                             {
                                 recipe.ingredientStacks.map((ingredientStack) => {
-                                    let ingredient = ingredientStack.ingredient;
+                                    let ingredient = ingredientStack.item;
                                     return <li  key={ingredient.id}>{ingredient.name} x {ingredientStack.totalAmount}</li>
                                 })
                             }
@@ -47,11 +45,5 @@ class RecipeTable extends React.Component<any, any> {
                     <td>{stack.totalCalories}</td>
                 </tr>
             });
-
-        return <>
-            { trs}
-            </>
     }
 }
-
-export default connect(RecipeTable.MapStoreToProp)(RecipeTable);

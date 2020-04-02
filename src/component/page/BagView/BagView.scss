@@ -1,23 +1,28 @@
 #bag-view {
-  padding-top:6em;
-
-  h2,h4 {
-    margin:0 0.8rem;
+  padding-top:5rem;
+  section {
+    margin: 1rem 0;
   }
 
-  h3 {
-    margin:0.9rem 0.8rem;
+
+  #top-bar-section {
+    h2 {
+      line-height: 2.1rem;
+    }
+    h2,h4 {
+      margin:0 0.8rem;
+    }
+
+    h3 {
+      font-size:1.1rem;
+      margin: 0.45rem 0.8rem;
+    }
   }
 
-  #bag-view-body {
-    margin: 1.5rem 0;
-  }
-
-  #bag-view-ingredients {
-    margin: 0 0 2rem 0;
-  }
-
-  #bag-view-description {
+  #description-section {
+    p,div {
+      line-height:1.5rem;
+    }
     p,.react-loading-skeleton {
       margin: 0.2em 0;
     }
@@ -26,4 +31,25 @@
       width: 50%;
     }
   }
+
+  #ingredient-recipe-section {
+    .DropdownSearch input {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      td {
+        text-align: left;
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+
+
+
 }

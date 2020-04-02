@@ -1,6 +1,7 @@
 import ApiStubs from "./stubs/RESTAPIStub";
 import {IMap} from "../interface/AdvancedTypes";
 import _ from "lodash";
+import {FoodBag} from "../model/FoodBag";
 
 
 export class HTTPService {
@@ -24,29 +25,32 @@ export class HTTPService {
             })
     }
 
-    public static GET(url:string):Promise<Response|IResponseStub> {
-        const temp = new URL(url);
+    public static PUT(url:string,body:any):Promise<object>{
+        return fetch(url,{
+            method: 'PUT',
+            mode: 'cors',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then( response => {
+            if(response.status==200) {
+                return response.json();
+            } else {
+                return null;
+            }
+        });
+    }
 
-        // if stubbed FN exists then
-        const stubbedFn = ApiStubs.GetStubs[temp.pathname];
-        if(stubbedFn) {
-            return getRandomDelay()
-                .then(() => ApiStubs.GetStubs[temp.pathname](temp.search) )
-                .then((result) => {
-                    return {
-                        body:result,
-                        status:200
-                    } as IResponseStub
-                })
-                .catch((err:Error) => {
-                    return {
-                        status:500,
-                        body: err.stack,
-                    } as IResponseStub
-                });
-        } else {
-            return fetch(temp.fullpath);
-        }
+    public static GET(url:string):Promise<object> {
+        return fetch(url)
+            .then( response => {
+                if(response.status==200) {
+                    return response.json();
+                } else {
+                    return null;
+                }
+            });
     }
 }
 

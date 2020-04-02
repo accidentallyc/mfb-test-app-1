@@ -1,7 +1,7 @@
 import {IRecipe} from "../../interface/IRecipe";
-import {Recipe} from "../RecipeService";
-import {IngredientStack} from "../IngredientService";
 import {Beef, Lamb, Parsley, Potato, Tomato} from "./IngredientStubs";
+import {Recipe} from "../../model/Recipe";
+import {IngredientStack} from "../../model/IngredientStack";
 
 export function PotatoCrisps():IRecipe {
     return Recipe(

@@ -1,6 +1,6 @@
-import {IIngredientStack} from "./IIngredient";
 import {IStack} from "./IStack";
 import {URL} from "./AdvancedTypes";
+import {IIngredientStack} from "./IIngredientStack";
 
 export interface IRecipe  {
     photoUrl: URL;
@@ -14,5 +14,6 @@ export interface IRecipe  {
 
 
 export interface IRecipeStack extends IStack {
-    recipe:IRecipe;
+    item:IRecipe;
+    itemId:string;
 }

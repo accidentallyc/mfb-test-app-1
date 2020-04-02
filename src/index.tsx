@@ -7,7 +7,8 @@ import MFBStore from "./service/MFBStore";
 import { Provider } from "react-redux";
 
 ReactDOM.render(
-    <Provider store={MFBStore}><App />
+    <Provider store={MFBStore}>
+        <App />
     </Provider>,
     document.getElementById('root')
 );

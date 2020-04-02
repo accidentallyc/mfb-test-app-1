@@ -1,8 +1,8 @@
-import {IIngredientStack} from "../../interface/IIngredient";
 import * as RecipeStubs from "./RecipeStubs";
 import {IMap} from "../../interface/AdvancedTypes";
 import {IRecipe} from "../../interface/IRecipe";
 import _ from "lodash";
+import {IIngredientStack} from "../../interface/IIngredientStack";
 
 type FunctionStub = (payload:any) => any;
 
@@ -34,7 +34,7 @@ export function getRecipesFromIngredients(payload:any) {
     const recipeStubs = RecipeStubs as IMap<Function>;
     const ingredientMap:IMap<IIngredientStack> = {};
     for(const stack of ingredientStacks) {
-        ingredientMap[stack.ingredient.id] = stack;
+        ingredientMap[stack.item.id] = stack;
     }
 
     const recipes:IRecipe[] = [];
@@ -42,7 +42,7 @@ export function getRecipesFromIngredients(payload:any) {
         const Recipe = recipeStubs[recipeName];
         const recipe:IRecipe = Recipe();
         const hasAllIngredients = recipe.ingredientStacks.every(stackInRecipe =>{
-            const stackInBag = ingredientMap[ stackInRecipe.ingredient.id ];
+            const stackInBag = ingredientMap[ stackInRecipe.item.id ];
             if(stackInBag) {
                 return  stackInBag.totalAmount >= stackInRecipe.totalAmount;
             }

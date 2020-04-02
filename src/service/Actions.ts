@@ -1,7 +1,5 @@
-import {IngredientService} from "./IngredientService";
-import {IIngredient, IIngredientStack} from "../interface/IIngredient";
-import {ViewType} from "../interface/states/FoodBagCustomizerState";
 import {IRecipe} from "../interface/IRecipe";
+import {ViewType} from "../component/ViewTypeSwitch";
 
 export enum ACTIONS {
     UPDATE_NAME = "UPDATE_NAME",
@@ -25,16 +23,6 @@ export function UPDATE_BAG_NAME(bagId:string, name:string) {
     }
 }
 
-export function UPDATE_BAG_ADDINGREDIENT(bagId:string, ingredient:IIngredient, amount?:number) {
-    return {
-        type: ACTIONS.UPDATE_BAG_ADDINGREDIENT,
-        ns: NAMESPACE.CUSTOMIZE_BAG,
-        ingredient,
-        amount,
-        bagId,
-    }
-}
-
 export function UPDATE_BAG_ADDRECIPE(bagId:string, recipe:IRecipe) {
     return {
         type: ACTIONS.UPDATE_BAG_ADDRECIPE,
@@ -53,25 +41,6 @@ export function UPDATE_BAG_RMRECIPE(bagId:string, recipe:IRecipe) {
     }
 }
 
-
-export function UPDATE_BAG_RMINGREDIENT(bagId:string, ingredientId:string) {
-    return {
-        type: ACTIONS.UPDATE_BAG_RMINGREDIENT,
-        ns: NAMESPACE.CUSTOMIZE_BAG,
-        ingredientId,
-        bagId,
-    }
-}
-
-export function UPDATE_BAG_INGREDIENT_MODIFYCOUNT(bagId:string, ingredientId:string, amount:number) {
-    return {
-        type: ACTIONS.UPDATE_BAG_INGREDIENT_MODIFYCOUNT,
-        ns: NAMESPACE.CUSTOMIZE_BAG,
-        ingredientId,
-        bagId,
-        amount,
-    }
-}
 
 export function UPDATE_PAGE_CUSTOMBAG_VIEWTYPE(viewType:ViewType|number) {
     return {

@@ -10,45 +10,19 @@ import {
     Soysauce,
     Tomato
 } from "./stubs/IngredientStubs";
-import {IIngredient, IIngredientStack} from "../interface/IIngredient";
+import {IIngredient} from "../interface/IIngredient";
 import _ from "lodash";
+import {HTTPService} from "./HTTPService";
 
 export class IngredientService {
-    static async getIngredientsByName(searchTerm:string) {
-        const ingredients:IIngredient[] = [
-            Beef(),
-            Cabbage(),
-            Chicken(),
-            Ketchup(),
-            Lamb(),
-            Parsley(),
-            Potato(),
-            Soybean(),
-            Soysauce(),
-            Tomato(),
-        ];
-        return Promise.resolve(ingredients.filter(ingredient => _.includes(ingredient.name.toLowerCase(), searchTerm.toLowerCase())));
+    static get API_URL() {
+        return (window as any).ENV_VARS.API_SERVER_URL;
     }
-}
 
-export function IngredientStack(ingredient:IIngredient, amount:number):IIngredientStack {
-    return  {
-        ingredient,
-        totalAmount: amount,
-        totalPrice: amount * ingredient.pricePerUnit,
-        totalCalories: amount * (ingredient.calories || 0),
-        _createdAt : (new Date).getTime(),
-    } as IIngredientStack;
+    static async getIngredientsByName(searchTerm:string):Promise<IIngredient[]> {
+        const url = `${this.API_URL}/ingredient?term=${searchTerm}`;
+        return HTTPService.GET(url).then((ingredients) => {
+            return ingredients as IIngredient[];
+        })
+    }
 };
-
-
-IngredientStack.isEqual = function (thisObj:any,otherStack:any):boolean {
-    return 'ingredient' in otherStack
-        && 'totalAmount' in otherStack
-        && 'totalCalories' in otherStack
-        && 'totalPrice' in otherStack
-        && thisObj.ingredient.id == otherStack.ingredient.id
-        && thisObj.totalAmount == otherStack.totalAmount
-        && thisObj.totalPrice == otherStack.totalPrice
-        && thisObj.totalCalories == otherStack.totalCalories;
-}

@@ -1,6 +1,6 @@
-import {IIngredientStack} from "./IIngredient";
 import { IRecipeStack} from "./IRecipe";
 import {IStack} from "./IStack";
+import {IIngredientStack} from "./IIngredientStack";
 
 export default interface IFoodBag extends IStack{
     id:string;
@@ -10,4 +10,5 @@ export default interface IFoodBag extends IStack{
     photoUrl?:string;
     creator?:any;
     description?:string;
+    [key:string] : any;
 }

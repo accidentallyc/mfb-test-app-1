@@ -1,5 +1,4 @@
 import {URL} from "./AdvancedTypes";
-import {IStack} from "./IStack";
 
 export enum IngredientUnit {
     ML="mL",
@@ -16,10 +15,6 @@ export interface IIngredient {
     shortDescp?: string;
     tags?: IFoodTag;
     calories?:number;
-}
-
-export interface IIngredientStack extends IStack{
-    ingredient: IIngredient;
 }
 
 export interface IFoodTag {
