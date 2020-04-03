@@ -1,5 +1,5 @@
 import {combineReducers, createStore} from "redux";
-import {FoodBagReducer} from "./reducer/FoodBagReducer";
+import FoodBagReducer from "./reducer/FoodBagReducer";
 
 const MFBStore = createStore(
     combineReducers({

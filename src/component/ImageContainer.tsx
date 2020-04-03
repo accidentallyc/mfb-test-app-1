@@ -1,7 +1,14 @@
-import React from "react";
+import React, {SyntheticEvent} from "react";
 import "./ImageContainer.scss";
 
-export default class ImageContainer extends React.Component<any, any>{
+interface ImageContainerProps {
+    src: string;
+    width?:string|number;
+    height?:string|number;
+    onClick?:(event:SyntheticEvent<HTMLElement>)=>void;
+}
+
+export default class ImageContainer extends React.Component<ImageContainerProps, any>{
     get style(){
         const style = {} as any;
         if(this.props.src) {
@@ -21,7 +28,7 @@ export default class ImageContainer extends React.Component<any, any>{
         return style;
     }
     render() {
-        return <div className={"image-container"} style={this.style}></div>
+        return <div className={"image-container"} style={this.style} onClick={this.props.onClick}></div>
     }
 }
 

@@ -16911,7 +16911,7 @@ spell-check:
     terms:
       - dictionary
       - edit
-      - BagEditor
+      - BagList
       - grammar
       - text
   styles:

@@ -26,10 +26,12 @@ interface BagViewProps {
     foodBagMap: IFoodBagStateMap,
     mode: 'readonly' | 'edit',
     dispatch: (action: AnyAction) => void;
+    isNew:boolean;
 };
 
 interface BagViewState {
     viewType: ViewType;
+    forceEditMode: boolean;
 }
 
 
@@ -43,7 +45,8 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
     constructor(props: BagViewProps) {
         super(props);
         this.state = {
-            viewType: ViewType.ingredients
+            viewType: ViewType.ingredients,
+            forceEditMode: false,
         };
     }
 
@@ -56,7 +59,11 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
     }
 
     get isEditMode(): boolean {
-        return this.props.mode === 'edit';
+        return this.props.mode === 'edit' || this.state.forceEditMode;
+    }
+
+    get isNew():boolean{
+        return this.foodBag.isPersisted == 0 && this.props.isNew;
     }
 
     onTitleChange = (event: SyntheticEvent) => {
@@ -65,7 +72,7 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
     }
 
     onSaveChanges = (event: SyntheticEvent) => {
-        this.props.dispatch(FOODBAG_COMMIT(this.props.foodBagId));
+        this.props.dispatch(FOODBAG_COMMIT(this.props.foodBagId, this.isNew));
     };
 
     onRemoveIngredient = (stackId: string) => {
@@ -88,6 +95,21 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
         this.setState({
             viewType
         })
+    }
+
+    onDescriptionChange = (event:SyntheticEvent<HTMLTextAreaElement>) => {
+        let description = event.currentTarget.value;
+        this.props.dispatch(FOODBAG_UPDATE_PROPERTY(this.foodBag.id, "description",description));
+    }
+
+    onUpdateImg = (event:SyntheticEvent) => {
+        if(!this.isEditMode) {
+            return;
+        }
+        let newImgUrl = prompt("New Image Url (sorry was too lazy to make a proper module)");
+        if(newImgUrl) {
+            this.props.dispatch(FOODBAG_UPDATE_PROPERTY(this.foodBag.id, "photoUrl",newImgUrl));
+        }
     }
 
     render() {
@@ -113,7 +135,7 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
     }
 
     renderIngredientRecipeTableSection = () => {
-        const {isLoading, foodBag} = this;
+        const {isLoading} = this;
         if (isLoading) {
             return <>
                 <div className={"pure-u-4-24"}/>
@@ -126,7 +148,11 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
             return <section id={"ingredient-recipe-section"}>
                 <div className={"pure-u-3-24"}/>
                 <div className={"pure-u-18-24"}>
-                    <DropdownSearch onSelectIngredient={this.onSelectIngredient} onSelectRecipe={this.onSelectRecipe}/>
+                    {
+                        this.isEditMode ?
+                            <DropdownSearch onSelectIngredient={this.onSelectIngredient} onSelectRecipe={this.onSelectRecipe}/>
+                            : <></>
+                    }
                     <ViewTypeSwitch onChangeViewType={this.onChangeViewType} foodBag={this.foodBag}/>
                     <div style={{textAlign: "center"}}>
                         {
@@ -135,9 +161,13 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
                                     case ViewType.ingredients:
                                         return <IngredientTable ingredientStacks={this.foodBag.ingredientStacks}
                                                                 onRemoveIngredient={this.onRemoveIngredient}
-                                                                onUpdateIngredient={this.onUpdateIngredient}/>;
+                                                                onUpdateIngredient={this.onUpdateIngredient}
+                                                                isReadonly={!this.isEditMode}
+                                        />;
                                     case ViewType.recipes:
-                                        return <RecipeTable recipeStacks={this.foodBag.recipeStacks}/>;
+                                        return <RecipeTable recipeStacks={this.foodBag.recipeStacks}
+                                                            isReadonly={!this.isEditMode}
+                                        />;
                                     default:
                                         return <></>;
                                 }
@@ -152,17 +182,32 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
 
     renderDescriptionSection = () => {
         const {isLoading, foodBag} = this;
+        let body;
+        if( isLoading ) {
+            body = <Skeleton height={"1em"} count={6}/>;
+        }
+        else if (this.isEditMode) {
+            body = <textarea
+                placeholder={'Describe your new foodbox'}
+                value={this.foodBag.description}
+                onChange={this.onDescriptionChange}></textarea>;
+        } else {
+            body = <span>{this.foodBag.description}</span>;
+        }
+
         return <section className={"pure-g"} id={"description-section"}>
             <div className={"pure-u-1"}>
                 <div id={"bag-view-description"}>
-                    {
-                        isLoading ?
-                            <Skeleton height={"1em"} count={6}/> :
-                            foodBag.description
-                    }
+                    {body}
                 </div>
             </div>
         </section>
+    }
+
+    onEditBtn = () => {
+        this.setState({
+            forceEditMode: true
+        })
     }
 
     renderTopBarSection = () => {
@@ -172,10 +217,10 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
                 {
                     isLoading ?
                         <Skeleton width={"6em"} height={"6em"}/> :
-                        <ImageContainer src={foodBag.photoUrl} height={"6em"} width={"6em"}/>
+                        <ImageContainer src={foodBag.photoUrl} height={"6em"} width={"6em"} onClick={this.onUpdateImg}/>
                 }
             </div>
-            <div className={"pure-u-18-24"}>
+            <div className={"pure-u-15-24"}>
                 {
                     isLoading ?
                         <>
@@ -196,15 +241,22 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
                         </>
                 }
             </div>
-            <div className={"pure-u-4-24"}>
+            <div className={"pure-u-7-24"}>
                 {
-                    isLoading ?
-                        <Skeleton width={"11.5rem"} height={"2rem"}/> :
-                        <div className="pure-button-group" role="group">
-                            <button className={"button-large pure-button"}><i className="far fa-copy"/> Copy</button>
-                            <button className={"button-large pure-button"}><i className="fas fa-shopping-cart"/> Order
-                            </button>
-                        </div>
+                    (() => {
+                        if( isLoading ) {
+                            return <Skeleton width={"11.5rem"} height={"2rem"}/>;
+                        } else if (!this.isEditMode) {
+                            return <div className="pure-button-group" role="group">
+                                <button className={"button-large pure-button"} onClick={this.onEditBtn}>Edit</button>
+                                <button className={"button-large pure-button"} onClick={()=>alert('Not Implemented')}><i className="far fa-copy"/> Copy</button>
+                                <button className={"button-large pure-button"} onClick={()=>alert('Not Implemented')}><i className="fas fa-shopping-cart"/> Order
+                                </button>
+                            </div>;
+                        } else {
+                            return <></>;
+                        }
+                    })()
                 }
             </div>
         </section>;
@@ -212,16 +264,16 @@ class BagView extends React.Component<BagViewProps, BagViewState> {
 
     renderMainActionDiv = () => {
         const {isLoading, foodBag} = this;
-        if (this.props.mode === 'readonly') {
+        if (!this.isEditMode) {
             return <></>
         } else {
             return <div style={{margin: "1em 0", textAlign: "right"}}>
-                <button className={"pure-button"} style={{marginRight: "0.5em"}}>
+                <a className={"pure-button"} style={{marginRight: "0.5em"}} href={'/foodbag'}>
                     <label>Cancel</label>
-                </button>
+                </a>
                 <button className={"pure-button button-success"} onClick={this.onSaveChanges}>
                     <i className="fas fa-save"/>
-                    <label>Save</label>
+                    <label> Save</label>
                 </button>
             </div>
         }

@@ -5,6 +5,7 @@ import {IRecipe, IRecipeStack} from "../interface/IRecipe";
 
 interface RecipeTableProps {
     recipeStacks: IRecipeStack[];
+    isReadonly:boolean;
 }
 
 export default class RecipeTable extends React.Component<RecipeTableProps, any> {
@@ -13,7 +14,7 @@ export default class RecipeTable extends React.Component<RecipeTableProps, any> 
                 <table className="pure-table recipe-table">
                     <thead>
                         <tr>
-                            <th>Recipe</th>
+                            <th>Suggested Recipes</th>
                             <th>Prep Time</th>
                             <th>Ingredients</th>
                             <th>Total Calories</th>

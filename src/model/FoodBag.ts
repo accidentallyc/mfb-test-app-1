@@ -25,9 +25,9 @@ export function FoodBag(id: string, name: string): IFoodBag {
  * @param json
  */
 FoodBag.wrap = function (json: any) :IFoodBag {
-    const foodbag:IFoodBag = _.extend(FoodBag("", ""), json);
-    foodbag.ingredientStacks = foodbag.ingredientStacks.map(IngredientStack.wrap);
-    foodbag.recipeStacks = foodbag.recipeStacks.map(RecipeStack.wrap);
+    const foodbag:IFoodBag = _.merge(FoodBag("", ""), json);
+    foodbag.ingredientStacks = (foodbag.ingredientStacks || []).map(IngredientStack.wrap);
+    foodbag.recipeStacks = (foodbag.recipeStacks || []).map(RecipeStack.wrap);
     return foodbag;
 }
 

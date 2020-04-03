@@ -8,7 +8,7 @@ import {
     FOODBAG_FETCH,
     FOODBAG_INGREDIENTSTACK_MODIFY,
     FOODBAG_INGREDIENTSTACK_NEW,
-    FOODBAG_INGREDIENTSTACK_RM,
+    FOODBAG_INGREDIENTSTACK_RM, FOODBAG_NEW,
     FOODBAG_RECIPESTACK_NEW,
     FOODBAG_RESOLVE_FETCH,
     FOODBAG_UPDATE_PROPERTY
@@ -19,13 +19,24 @@ import {IRecipe, IRecipeStack} from "../../interface/IRecipe";
 import {RecipeStack} from "../../model/RecipeStack";
 import {IIngredientStack} from "../../interface/IIngredientStack";
 import RecipeService from "../RecipeService";
+import {FoodBag} from "../../model/FoodBag";
 
-export function FoodBagReducer(prevState:any = {}, action:any){
+export default function FoodBagReducer(prevState:any = {}, action:any){
     const foodBagId = action.foodBagId;
     let newState = prevState;
     let newFoodBagState:IFoodBagStateMapItem = prevState[foodBagId] ? _.cloneDeep(prevState[foodBagId]) : {};
     let isDirty = true;
     switch (action.type) {
+        case FOODBAG_NEW.name:
+            const foodBag = FoodBag(foodBagId, "Untitled FoodBag")
+            foodBag.creator = {
+                id:"USER_GUEST_1585783817984",
+                fullName: "Guest",
+            };
+            foodBag.creatorId = foodBag.creator.id;
+            foodBag.isPersisted = 0;
+            newFoodBagState.value =foodBag;
+            break;
         case FOODBAG_FETCH.name:
             newFoodBagState.value = newFoodBagState.value || {};
             newFoodBagState.isLoading = true;
@@ -47,9 +58,16 @@ export function FoodBagReducer(prevState:any = {}, action:any){
         case FOODBAG_COMMIT.name:
             newFoodBagState.lastOperation = Promise
                 .resolve(newFoodBagState.lastOperation)
-                .then(() => FoodBagService.UpdateBagById(foodBagId, newFoodBagState.value))
                 .then(() => {
-                    MFBStore.dispatch(FOODBAG_COMMIT_RESOLVE(foodBagId));
+                    debugger
+                    if(action.isNew) {
+                        return FoodBagService.CreateBag(newFoodBagState.value)
+                    } else {
+                        return FoodBagService.UpdateBagById(foodBagId, newFoodBagState.value)
+                    }
+                })
+                .then((foodBag) => {
+                    MFBStore.dispatch(FOODBAG_COMMIT_RESOLVE(foodBagId,foodBag));
                 });
             break;
         case FOODBAG_INGREDIENTSTACK_NEW.name:
@@ -72,6 +90,8 @@ export function FoodBagReducer(prevState:any = {}, action:any){
             }
             break;
         case FOODBAG_COMMIT_RESOLVE.name:
+            newFoodBagState.value = action.foodBag;
+            alert("Saved!");
             break;
         case FOODBAG_INGREDIENTSTACK_RM.name:
             if( newFoodBagState.value ) {

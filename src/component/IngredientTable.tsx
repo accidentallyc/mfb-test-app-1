@@ -7,6 +7,7 @@ interface RecipeTableProps {
     ingredientStacks: IIngredientStack[];
     onUpdateIngredient: (ingredientId: string, newAmt: number, prevAmt: number) => any;
     onRemoveIngredient: (ingredientId: string) => any;
+    isReadonly?:boolean;
 }
 
 export default class IngredientTable extends React.Component<RecipeTableProps, any> {
@@ -39,20 +40,28 @@ export default class IngredientTable extends React.Component<RecipeTableProps, a
                 return <tr key={ingredient.id} data-ingredient-id={ingredient.id}>
                     <td>{ingredient.name}</td>
                     <td>
-                        <input className={"clean-input"}
-                               type={'number'}
-                               value={stack.totalAmount} step={1} min={1} max={30}
-                               onChange={this.onTdChangeAmount}
-                               data-stack-id={stack.id}/>
+                        {
+                            this.props.isReadonly ?
+                                <span>{stack.totalAmount}</span>
+                                : <input className={"clean-input"}
+                                       type={'number'}
+                                       value={stack.totalAmount} step={1} min={1} max={30}
+                                       onChange={this.onTdChangeAmount}
+                                       data-stack-id={stack.id}/>
+                        }
                     </td>
                     <td><small>${ingredient.pricePerUnit} /{ingredient.unit}</small></td>
                     <td>${stack.totalPrice.toFixed(2)}</td>
                     <td>{stack.totalCalories.toFixed(2)}</td>
-                    <td className={"controls"}>
-                        <button
-                            className="pure-button fas fa-trash" onClick={this.onTdTrashIconClick}
-                            data-stack-id={stack.id}/>
-                    </td>
+                    {
+                        this.props.isReadonly ?
+                            <></> :
+                            <td className={"controls"}>
+                                <button
+                                    className="pure-button fas fa-trash" onClick={this.onTdTrashIconClick}
+                                    data-stack-id={stack.id}/>
+                            </td>
+                    }
                 </tr>
             });
 
@@ -65,7 +74,7 @@ export default class IngredientTable extends React.Component<RecipeTableProps, a
                     <th>Unit Price</th>
                     <th>Price</th>
                     <th>Calories</th>
-                    <th className={"action-th"}/>
+                    { this.props.isReadonly ? <></> :  <th className={"action-th"}/>  }
                 </tr>
                 </thead>
                 <tbody>{trs}</tbody>
@@ -76,7 +85,7 @@ export default class IngredientTable extends React.Component<RecipeTableProps, a
                     <td/>
                     <td>${totalPrice.toFixed(2)}</td>
                     <td>{totalCals}</td>
-                    <td className={"action-td"}/>
+                    { this.props.isReadonly ? <></> : <td className={"action-td"}/> }
                 </tr>
                 </tfoot>
             </table>

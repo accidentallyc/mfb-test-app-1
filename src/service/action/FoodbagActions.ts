@@ -11,6 +11,14 @@ export function FOODBAG_FETCH (foodBagId:string, includes?:string[]){
     }
 };
 
+export function FOODBAG_NEW (foodBagId:string) {
+    return {
+        foodBagId,
+        type: FOODBAG_NEW.name,
+        _dispatchTime: new Date,
+    }
+}
+
 export function FOODBAG_RESOLVE_FETCH(foodBagId:string, foodBag:IFoodBag) {
     return {
         foodBag,
@@ -30,17 +38,19 @@ export function FOODBAG_UPDATE_PROPERTY(foodBagId:string, propertyToUpdate:strin
     }
 }
 
-export function FOODBAG_COMMIT(foodBagId:string){
+export function FOODBAG_COMMIT(foodBagId:string, isNew:boolean = false){
     return {
         foodBagId,
+        isNew,
         type: FOODBAG_COMMIT.name,
         _dispatchTime: new Date,
     }
 }
 
-export function FOODBAG_COMMIT_RESOLVE(foodBagId:string){
+export function FOODBAG_COMMIT_RESOLVE(foodBagId:string, foodBag:IFoodBag){
     return {
         foodBagId,
+        foodBag,
         type: FOODBAG_COMMIT_RESOLVE.name,
         _dispatchTime: new Date,
     }

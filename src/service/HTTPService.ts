@@ -5,27 +5,24 @@ import {FoodBag} from "../model/FoodBag";
 
 
 export class HTTPService {
-    public static POST(url:string, payload:any) {
-        return getRandomDelay()
-            .then(() => {
-                const temp = new URL(url);
-                return ApiStubs.PostStubs[temp.pathname](payload)
-            })
-            .then((result) => {
-                return {
-                    body:result,
-                    status:200
-                } as IResponseStub
-            })
-            .catch((err:Error) => {
-                return {
-                    status:500,
-                    body: err.stack,
-                } as IResponseStub
-            })
+    public static POST(url:string,body:any):Promise<any>{
+        return fetch(url,{
+            method: 'POST',
+            mode: 'cors',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(body)
+        }).then( response => {
+            if(response.status==200) {
+                return response.json();
+            } else {
+                throw response;
+            }
+        });
     }
 
-    public static PUT(url:string,body:any):Promise<object>{
+    public static PUT(url:string,body:any):Promise<any>{
         return fetch(url,{
             method: 'PUT',
             mode: 'cors',
@@ -37,18 +34,18 @@ export class HTTPService {
             if(response.status==200) {
                 return response.json();
             } else {
-                return null;
+                throw response;
             }
         });
     }
 
-    public static GET(url:string):Promise<object> {
+    public static GET(url:string):Promise<any> {
         return fetch(url)
             .then( response => {
                 if(response.status==200) {
                     return response.json();
                 } else {
-                    return null;
+                    throw response;
                 }
             });
     }
